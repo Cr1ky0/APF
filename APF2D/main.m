@@ -15,37 +15,37 @@ Xsum=[10 10;1 1.2;3 2.5;4 4.5;3 6;6 2;5.5 5.5;8 8.5];%这个向量是(n+1)*2维�
 Xj=Xo;%j=1循环初始，将车的起始坐标赋给Xj
 %***************初始化结束，开始主体循环******************
 for j=1:J %循环开始
-Goal(j,1)=Xj(1); %Goal是保存车走过的每个点的坐标。刚开始先将起点放进该向量。
-Goal(j,2)=Xj(2);
-%调用计算角度模块
-Theta=compute_angle(Xj,Xsum,n);%Theta是计算出来的车和障碍，和目标之间的与X轴之间的夹角，统一规定角度为逆时针方向，用这个模块可以计算出来。
-
-%调用计算引力模块
-Angle=Theta(1);%Theta（1）是车和目标之间的角度，目标对车是引力。
-angle_at=Theta(1);%为了后续计算斥力在引力方向的分量赋值给angle_at
-[Fatx,Faty]=compute_Attract(Xj,Xsum,k,Angle,0,Po,n); %计算出目标对车的引力在x,y方向的两个分量值。
-for i=1:n
-angle_re(i)=Theta(i+1);%计算斥力用的角度，是个向量，因为有n个障碍，就有n个角度。
-end
-
-%调用计算斥力模块
-[Frerxx,Freryy,Fataxx,Fatayy]=compute_repulsion(Xj,Xsum,m,angle_at,angle_re,n,Po,a);%计算出斥力在x,y方向的分量数组。
-%计算合力和方向，这有问题，应该是数，每个j循环的时候合力的大小应该是一个唯一的数，不是数组。应该把斥力的所有分量相加，引力所有分量相加。
-Fsumyj=Faty+Freryy+Fatayy;%y方向的合力
-Fsumxj=Fatx+Frerxx+Fataxx;%x方向的合力
-Position_angle(j)=atan(Fsumyj/Fsumxj);%合力与x轴方向的夹角向量
-
-%计算车的下一步位置
-Xnext(1)=Xj(1)+l*cos(Position_angle(j));
-Xnext(2)=Xj(2)+l*sin(Position_angle(j));
-%保存车的每一个位置在向量中
-Xj=Xnext;
-%判断
-if ((Xj(1)-Xsum(1,1))>0)&((Xj(2)-Xsum(1,2))>0) %是应该完全相等的时候算作到达，还是只是接近就可以？现在按完全相等的时候编程。
-    K=j;%记录迭代到多少次，到达目标。
-break;
-%记录此时的j值
-end%如果不符合if的条件，重新返回循环，继续执行。
+    Goal(j,1)=Xj(1); %Goal是保存车走过的每个点的坐标。刚开始先将起点放进该向量。
+    Goal(j,2)=Xj(2);
+    %调用计算角度模块
+    Theta=compute_angle(Xj,Xsum,n);%Theta是计算出来的车和障碍，和目标之间的与X轴之间的夹角，统一规定角度为逆时针方向，用这个模块可以计算出来。
+    
+    %调用计算引力模块
+    Angle=Theta(1);%Theta（1）是车和目标之间的角度，目标对车是引力。
+    angle_at=Theta(1);%为了后续计算斥力在引力方向的分量赋值给angle_at
+    [F_at_x,F_at_y]=compute_Attract(Xj,Xsum,k,Angle); %计算出目标对车的引力在x,y方向的两个分量值。
+    for i=1:n
+    angle_re(i)=Theta(i+1);%计算斥力用的角度，是个向量，因为有n个障碍，就有n个角度。
+    end
+    
+    %调用计算斥力模块
+    [Frerxx,Freryy,Fataxx,Fatayy]=compute_repulsion(Xj,Xsum,m,angle_at,angle_re,n,Po,a);%计算出斥力在x,y方向的分量数组。
+    %计算合力和方向，这有问题，应该是数，每个j循环的时候合力的大小应该是一个唯一的数，不是数组。应该把斥力的所有分量相加，引力所有分量相加。
+    Fsumyj=F_at_y+Freryy+Fatayy;%y方向的合力
+    Fsumxj=F_at_x+Frerxx+Fataxx;%x方向的合力
+    Position_angle(j)=atan(Fsumyj/Fsumxj);%合力与x轴方向的夹角向量
+    
+    %计算车的下一步位置
+    Xnext(1)=Xj(1)+l*cos(Position_angle(j));
+    Xnext(2)=Xj(2)+l*sin(Position_angle(j));
+    %保存车的每一个位置在向量中
+    Xj=Xnext;
+    %判断
+    if ((Xj(1)-Xsum(1,1))>0)&((Xj(2)-Xsum(1,2))>0) %是应该完全相等的时候算作到达，还是只是接近就可以？现在按完全相等的时候编程。
+        K=j;%记录迭代到多少次，到达目标。
+        break;
+    %记录此时的j值
+    end%如果不符合if的条件，重新返回循环，继续执行。
 end%大循环结束
 
 K=j;
