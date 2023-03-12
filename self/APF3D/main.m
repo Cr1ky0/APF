@@ -24,15 +24,16 @@ n = 100;                                    % 障碍物个数
 % 
 % Obs = [a1;a2;a3;a4;a5;a6;a7;a8;a9;a10];     % 障碍物坐标矩阵
 
-Obs = rand(n,3)*10;
+% Obs = rand(n,3)*10;
 %  Obs = randi([0,DesX],n,3);               % 随机生成障碍物
 %% 超参数设置
 Kaat = 1;                     % 引力尺度因子
-Krep = 50;                     % 斥力尺度因子
+Krep = 25;                     % 斥力尺度因子
 P0 = 2;                        % 斥力作用范围
-StepRate = 0.02;                % 步长
+StepRate = 0.01;                % 步长
 Epoch = 1000;                   % 最大迭代次数
-
+% OBS1障碍物数据集下的参数Kaat=1 Krep=25 P0=2 StepRate=0.01 Epoch=1000
+Obs = load('OBS1.mat').Obs;
 %% 方程定义
 syms x y z obs_x obs_y obs_z;
 
@@ -56,7 +57,7 @@ f_repz(x,y,z,obs_x,obs_y,obs_z) = - diff(u_rep,z,1);
 timer = tic;
 
 figure(1)
-plot3(MyX,MyY,MyZ,'.','MarkerSize',8,'color','black');
+plot3(MyX,MyY,MyZ,'.','MarkerSize',4,'color','black');
 xlabel('X');
 ylabel('Y');
 zlabel('Z');
@@ -87,7 +88,7 @@ while(1)
    MyZ = MyZ + StepRate*Fzsum;
 
    hold on 
-   plot3(MyX,MyY,MyZ,'.','MarkerSize',8,'color','black');
+   plot3(MyX,MyY,MyZ,'.','MarkerSize',4,'color','black');
    pause(0.1) % 这个一定要加不然就不会实时绘图
 %    pos(CountFlag+2,1) = MyX;
 %    pos(CountFlag+2,2) = MyY;
