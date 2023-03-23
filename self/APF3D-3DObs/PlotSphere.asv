@@ -1,0 +1,12 @@
+function [] = PlotSphere(x,y,z,r,color)
+    % 传入中心坐标画圆
+    [X,Y,Z] = sphere(100);
+    X = X * r;
+    Y = Y * r;
+    Z = Z * r;
+    c = surf(X+x,Y+y,Z+z);
+%     c.FaceColor = color;
+    c.EdgeColor = 'none';
+    c.SpecularStrength = 
+    hold on
+end
