@@ -17,16 +17,19 @@ Kaat = 1;                     % 引力尺度因子
 Krep = 10;                     % 斥力尺度因子
 P0 = 2;                        % 斥力作用范围
 StepRate = 0.02;                % 步长
-Epoch = 1000;                   % 最大迭代次数
 max_turn_angle = pi/6;          % 最大转向角
-max_pitch_angle = pi/8;         % 最大俯仰角
+max_pitch_angle = pi/6;         % 最大俯仰角
+max_step = 0.2;                    % 最大单段步长
+power = 200;                   % 最大能量（可前进的总路程量）
+Epoch = power/max_step;         % 最大迭代次数
 %% 自定义障碍物
 Obs = rand(n,3)*10;
 %  Obs = randi([0,DesX],n,3);               % 随机生成障碍物
 % Obs = [10.5,10.5,10.5];
-% OBS1障碍物数据集下的参数Kaat=1 Krep=25 P0=2 StepRate=0.01 Epoch=1000
+
 % Obs = load('OBS1.mat').Obs;
 % Obs = load('OBS2.mat').Obs;
+% Obs = load('max_step_test_data.mat').Obs;
 
 %% 改进版方程定义
 syms x1 y1 z1 x2 y2 z2 obs_x obs_y obs_z;
@@ -78,7 +81,7 @@ while(1)
    %% 力计算
    % 引力计算
    [Fattx,Fatty,Fattz] = Attractive(MyX,MyY,MyZ,f_attx,f_atty,f_attz); 
-
+   
    % 斥力计算
    Frepx = zeros(1,n);
    Frepy = zeros(1,n);
@@ -112,7 +115,7 @@ while(1)
                fprintf("小于\n")
                cur_angle = last_angle - max_turn_angle;
            end
-           % 以StepRate为F计算，用F计算可能导致漂移（仍有漂移问题，但不会反复横跳了，本质是下一步后离点太近导致斥力过大，考虑修改一下原函数） 
+           % 映射到最大偏向角位置
            [Fx,Fy] = MappingF(cur_angle);   
            [MyX,MyY,last_Fxy] = ComputeNewXY(MyX,MyY,Fx,Fy,StepRate);
        else
@@ -132,11 +135,14 @@ while(1)
             MyZ = MyZ + StepRate*Fzsum;
        end
    end
+%% 路径总长度约束
+
+   [MyX,MyY,MyZ] = MappingCoordinates(MyX,MyY,MyZ,last_xyz(1),last_xyz(2),last_xyz(3),max_step);
 
    %% 实时绘图
    hold on 
 %    plot3(MyX,MyY,MyZ,'.','MarkerSize',4,'color','black');
-     plot3([last_xyz(1) MyX],[last_xyz(2) MyY],[last_xyz(3) MyZ],'-','MarkerSize',4,'color','black');
+   plot3([last_xyz(1) MyX],[last_xyz(2) MyY],[last_xyz(3) MyZ],'-','MarkerSize',4,'color','black');
    pause(0) % 这个一定要加不然就不会实时绘图
 
    % 覆盖上一次坐标

@@ -1,4 +1,5 @@
-function angle = Angle(Fxsum,Fysum) 
+function angle = AngleX(Fxsum,Fysum) 
+% 求水平力与X轴夹角
     F = sqrt(Fxsum^2 + Fysum^2);
 %     angle = acos(Fxsum / F);
     % 计算与x轴夹角（包括>=180°）

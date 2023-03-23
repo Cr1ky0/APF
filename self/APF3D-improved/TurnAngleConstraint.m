@@ -1,7 +1,7 @@
 function [F_angle,last_angle,cur_angle]= TurnAngleConstraint(last_Fxy,cur_Fxy)
    % 计算力的方向之间夹角
-   last_angle = Angle(last_Fxy(1),last_Fxy(2));
-   cur_angle = Angle(cur_Fxy(1),cur_Fxy(2)); 
+   last_angle = AngleX(last_Fxy(1),last_Fxy(2));
+   cur_angle = AngleX(cur_Fxy(1),cur_Fxy(2)); 
    if(last_angle == cur_angle)
        F_angle = 0;
    else
