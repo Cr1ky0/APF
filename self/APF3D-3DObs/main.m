@@ -25,32 +25,8 @@ power = 200;                   % 最大能量（可前进的总路程量）
 Epoch = power/max_step;         % 最大迭代次数
 
 %% 改进版方程定义
-syms x1 y1 z1 x2 y2 z2 obs_x obs_y obs_z;
-R_des = (x2-DesX)^2+(y2-DesY)^2+(z2-DesZ)^2;
-R_obs = (x1-obs_x)^2 + (y1-obs_y)^2 + (z1-obs_z)^2;
-r_des = sqrt(R_des);
-r_obs = sqrt(R_obs);
 m = 0.5; % 改进方程参数定义
-
-% 引力定义部分
-u_att(x2,y2,z2) = 1/2*Kaat*(R_des); % 引力势能函数
-f_attx(x2,y2,z2) = - diff(u_att,x2,1);
-f_atty(x2,y2,z2) = - diff(u_att,y2,1);
-f_attz(x2,y2,z2) = - diff(u_att,z2,1);
-
-% 斥力定义部分
-u_rep(x1,y1,z1,x2,y2,z2,obs_x,obs_y,obs_z) = 1/2*Krep*(1/r_obs-1/P0)^2*sqrt(r_des)^m;
-f_repx1(x1,y1,z1,x2,y2,z2,obs_x,obs_y,obs_z) = - diff(u_rep,x1,1);
-f_repy1(x1,y1,z1,x2,y2,z2,obs_x,obs_y,obs_z) = - diff(u_rep,y1,1);
-f_repz1(x1,y1,z1,x2,y2,z2,obs_x,obs_y,obs_z) = - diff(u_rep,z1,1);
-
-f_repx2(x1,y1,z1,x2,y2,z2,obs_x,obs_y,obs_z) = - diff(u_rep,x2,1);
-f_repy2(x1,y1,z1,x2,y2,z2,obs_x,obs_y,obs_z) = - diff(u_rep,y2,1);
-f_repz2(x1,y1,z1,x2,y2,z2,obs_x,obs_y,obs_z) = - diff(u_rep,z2,1);
-
-f_repx(x1,y1,z1,x2,y2,z2,obs_x,obs_y,obs_z) = f_repx1 + f_repx2;
-f_repy(x1,y1,z1,x2,y2,z2,obs_x,obs_y,obs_z) = f_repy1 + f_repy2;
-f_repz(x1,y1,z1,x2,y2,z2,obs_x,obs_y,obs_z) = f_repz1 + f_repz2;
+[f_attx,f_atty,f_attz,f_repx,f_repy,f_repz] = EquationDefinition(DesX,DesY,DesZ,m,Kaat,Krep,P0);
 
 %% 画图
 figure(1)
@@ -75,6 +51,9 @@ while(1)
    % 圆柱表面obs计算（可以用当前无人机距离同水平面圆柱的切面圆的边缘到无人机的最短距离的点当障碍物）
    Obs2 = GetCylinderObsPoint([StartX,StartY,StartZ],Cylinder_Obs,n2,P0);
    % 圆锥表面obs计算
+   % %
+    
+   % 汇总
    Obs = [Obs1;Obs2];
    %% 力计算
    % 引力计算
@@ -129,10 +108,12 @@ while(1)
        end
    end
 %% 路径总长度约束
-
    [StartX,StartY,StartZ] = MappingCoordinates(StartX,StartY,StartZ,last_xyz(1),last_xyz(2),last_xyz(3),max_step);
 
-   %% 实时绘图
+%% 解决路径震荡问题（插值/拟合）
+%%%%%%%%待实现
+
+%% 实时绘图
    hold on 
 %    plot3(MyX,MyY,MyZ,'.','MarkerSize',4,'color','black');
    plot3([last_xyz(1) StartX],[last_xyz(2) StartY],[last_xyz(3) StartZ],'-','MarkerSize',4,'color','black');
