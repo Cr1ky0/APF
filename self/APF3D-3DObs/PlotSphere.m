@@ -6,10 +6,14 @@ function [] = PlotSphere(x,y,z,r)
     Z = Z * r;
     c = surf(X+x,Y+y,Z+z);
     c.EdgeColor = 'none';
-%     c.FaceAlpha = 1;
-%     c.FaceColor = '#09DFFF';
-    c.SpecularStrength = 1;
-    c.AmbientStrength = 1;
-    c.DiffuseStrength = 1;
+%     c.FaceColor = '#6C7478';
+%     c.AmbientStrength = 0.1;
+%     c.DiffuseStrength = 0.3;
+%     c.SpecularStrength = 0.1;
+%     c.SpecularExponent = 10;
+
+%     l =light;
+%     l.Position = [10 0 10];
+%     material metal
     hold on
 end

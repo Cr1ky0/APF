@@ -26,6 +26,7 @@ function Obs = GetSphereObsPoint(cur_pos,obs_data,n,P0) % obs_data前三位为�
         angle_y = atan(x_diff / y_diff);
         angle_z = atan(z_diff / dist);
         % 计算表面坐标
+        % 用加减坐标的方式有效避免了坐标跨象限的问题
         dist_to_surf = dist - r;
         dist_to_surf_xy = dist_to_surf * cos(angle_z);
         if(x > X)

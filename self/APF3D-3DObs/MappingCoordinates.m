@@ -1,4 +1,5 @@
 function [X,Y,Z] = MappingCoordinates(x,y,z,last_x,last_y,last_z,max_step)
+    %% 限制最大步长在同方向上进行映射
     [angle_z,r] = AngleZ([last_x,last_y,last_z],x,y,z);
     angle_x = atan(abs(y-last_y)/abs(x-last_x));
     angle_y = atan(abs(x-last_x)/abs(y-last_y));
