@@ -9,15 +9,16 @@ StartY = 0;
 StartZ = 0;
 DesX = 10;                                 % 终点位置
 DesY = 10;
-DesZ = 10;
+DesZ = 5;
 n1 = 5;                                    % 球体障碍物个数
 n2 = 5;                                    % 圆柱体障碍物个数
-n = n1 + n2;
+n3 = 5;                                    % 圆锥体障碍物个数
+n = n1 + n2 + n3;                          
 %% 超参数设置
 Kaat = 1;                     % 引力尺度因子
 Krep = 15;                     % 斥力尺度因子
 P0 = 2;                        % 斥力作用范围
-StepRate = 0.02;                % 步长
+StepRate = 0.01;                % 步长
 max_turn_angle = pi/6;          % 最大转向角
 max_pitch_angle = pi/6;         % 最大俯仰角
 max_step = 0.1;                    % 最大单段步长
@@ -39,7 +40,7 @@ ylabel('Y');
 zlabel('Z');
 grid on
 hold on 
-[Sphere_Obs,Cylinder_Obs] = PlotObs(n1,n2);
+[Sphere_Obs,Cylinder_Obs,Cone_Obs] = PlotObs(n1,n2,n3);
 %% 计算
 CountFlag = 0;
 last_Fxy = [0,0];
@@ -51,10 +52,9 @@ while(1)
    % 圆柱表面obs计算（可以用当前无人机距离同水平面圆柱的切面圆的边缘到无人机的最短距离的点当障碍物）
    Obs2 = GetCylinderObsPoint([StartX,StartY,StartZ],Cylinder_Obs,n2,P0);
    % 圆锥表面obs计算
-   % %
-    
+   Obs3 = GetConeObsPoint([StartX,StartY,StartZ],Cone_Obs,n3,P0);
    % 汇总
-   Obs = [Obs1;Obs2];
+   Obs = [Obs1;Obs2;Obs3];
    %% 力计算
    % 引力计算
    [Fattx,Fatty,Fattz] = Attractive(StartX,StartY,StartZ,f_attx,f_atty,f_attz); 
