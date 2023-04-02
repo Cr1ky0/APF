@@ -1,15 +1,16 @@
-function [StartX,StartY,StartZ,last_Fxy,last_xyz,isDone] = MultiThread(CountFlag,Start,Des, ...
+function [StartX,StartY,StartZ,last_Fxy,last_xyz,isDone,CountFlag] = MultiThread(CountFlag,Start,Des, ...
     n,n_obs, ...
     P0,StepRate,max_step,max_turn_angle,max_pitch_angle,Epoch,...
     f_attx,f_atty,f_attz,f_repx,f_repy,f_repz, ...
     Sphere_Obs,Cylinder_Obs,Cone_Obs, ...
     last_xyz,last_Fxy, ...
     color)
-    isDone = false;
-    StartX = Start(1);StartY = Start(2);StartZ = Start(3); % 起始点
-    n1 = n_obs(1);n2 = n_obs(2);n3 = n_obs(3);
-    DesX=Des(1);DesY=Des(2);DesZ=Des(3);
-    %% 计算最短Obs点
+   timer = tic;
+   isDone = false;
+   StartX = Start(1);StartY = Start(2);StartZ = Start(3); % 起始点
+   n1 = n_obs(1);n2 = n_obs(2);n3 = n_obs(3);
+   DesX=Des(1);DesY=Des(2);DesZ=Des(3);
+   %% 计算最短Obs点
    % 圆表面obs计算
    Obs1 = GetSphereObsPoint([StartX,StartY,StartZ],Sphere_Obs,n1,P0);
    % 圆柱表面obs计算（可以用当前无人机距离同水平面圆柱的切面圆的边缘到无人机的最短距离的点当障碍物）
@@ -75,7 +76,6 @@ function [StartX,StartY,StartZ,last_Fxy,last_xyz,isDone] = MultiThread(CountFlag
 
 %% 实时绘图
    hold on 
-%    plot3(MyX,MyY,MyZ,'.','MarkerSize',4,'color','black');
    plot3([last_xyz(1) StartX],[last_xyz(2) StartY],[last_xyz(3) StartZ],'-','MarkerSize',4,'color',color);
    pause(0) % 这个一定要加不然就不会实时绘图
 
@@ -85,13 +85,15 @@ function [StartX,StartY,StartZ,last_Fxy,last_xyz,isDone] = MultiThread(CountFlag
    last_xyz(3) = StartZ;
    %% 判断模块
    if(abs(StartX-DesX) < 0.5 && abs(StartY-DesY)< 0.5 && abs(StartZ-DesZ) < 0.5)
-       fprintf("完成");
+       fprintf("无人机1到达终点");
+       toc(timer);
+       display(CountFlag);
        isDone=true;
    end
 
    CountFlag = CountFlag + 1;
    if(CountFlag >= Epoch)
-       fprintf("超时");
+       fprintf("无人机1超时");
        isDone=true;
    end    
 end
